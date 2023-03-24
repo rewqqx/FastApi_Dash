@@ -56,7 +56,7 @@ class ModelsService:
 
         self.write_response('train', user_id)
 
-        data['Predict Type'] = y
+        data['Predict Target'] = y
         return data
 
     def download(self, type, user_id):

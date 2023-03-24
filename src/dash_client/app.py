@@ -55,4 +55,4 @@ def update_graphs(active_cell, page_current):
     elif active_cell:
         id_row = active_cell['row']
 
-    return df.df_prediction['Predict Type'].iloc[[id_row]] if id_row else 'Select row'
+    return df.df_prediction['Predict Target'].iloc[[id_row]] if id_row else 'Select row'

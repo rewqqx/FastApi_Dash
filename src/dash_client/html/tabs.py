@@ -109,7 +109,7 @@ def tab_model_content(df):
 
     model_bar = px.bar(x=model.feature_importances_, y=model.feature_names_in_, )
 
-    cf = confusion_matrix(df.df_prediction['Target'], df.df_prediction['Predict Type'], labels=[0, 1])
+    cf = confusion_matrix(df.df_prediction['Target'], df.df_prediction['Predict Target'], labels=[0, 1])
 
     cm = px.imshow(cf, text_auto=True, title='Confusion Matrix')
     tab = [
