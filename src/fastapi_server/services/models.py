@@ -16,7 +16,9 @@ class ModelsService:
         self.data_file = "../files/data.csv"
         self.data_preproc_file = "../files/data_preproc.csv"
         self.data_predict_file = "../files/prediction_data.csv"
+        self.data_all_predict_file = "../files/prediction_all_data.csv"
         self.model_file = "../files/joblib_model.csv"
+        self.data_test_file = "../files/data_test.csv"
 
     def preprocessing(self, data: pd.DataFrame, user_id: int) -> pd.DataFrame:
         data.drop(['Failure Type'], axis='columns', inplace=True)
@@ -41,22 +43,35 @@ class ModelsService:
         model.fit(X_traino, y_traino)
 
         joblib.dump(model, self.model_file)
-
+        X_testo['Target'] = y_testo
         self.write_response('fit', user_id)
+        return X_testo
 
     def predict(self, data, user_id):
         data_c = data.copy()
-        data_c.drop(['Failure Type'], axis='columns', inplace=True)
-        labels2drop = ['UDI', 'Product ID', 'Target']
-        data_c = pd.get_dummies(data_c, columns=['Type'], prefix='Type')
+        labels2drop = ['Target']
         data_c = data_c.drop(columns=labels2drop)
         model = joblib.load(self.model_file)
 
         y = model.predict(data_c)
 
-        self.write_response('train', user_id)
+        self.write_response('predict', user_id)
 
         data['Predict Target'] = y
+        return data
+
+    def predict_all(self):
+        data = pd.read_csv(self.data_file)
+        data.drop(['Failure Type'], axis='columns', inplace=True)
+        labels2drop = ['UDI', 'Product ID', 'Target']
+        data = pd.get_dummies(data, columns=['Type'], prefix='Type')
+        data = data.drop(columns=labels2drop)
+        model = joblib.load(self.model_file)
+
+        y = model.predict(data)
+
+        data['Predict Target'] = y
+
         return data
 
     def download(self, type, user_id):
@@ -70,6 +85,8 @@ class ModelsService:
                 response = self.data_predict_file
             case 4:
                 response = self.model_file
+            case 5:
+                response = self.data_all_predict_file
         return response
 
     def download_model(self, user_id):

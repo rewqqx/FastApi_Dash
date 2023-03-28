@@ -9,13 +9,13 @@ from src.dash_client.api_request.api_request import ApiRequest
 
 
 def tab_df_content(df):
-    histogram = px.histogram(df.df, x="Air temperature [K]", color="Type")
+    histogram = px.histogram(df.df, x="Air temperature [K]", color="Target", title='Frequency histogram')
 
-    scatter = px.scatter(df.df, x="Air temperature [K]", y="Air temperature [K]")
+    scatter = px.scatter(df.df, x="Air temperature [K]", y="Air temperature [K]", title='Scatter Plot')
 
-    histogram_all = px.histogram(df.df, x="Air temperature [K]")
+    histogram_all = px.histogram(df.df, x="Air temperature [K]", title='Frequency histogram')
 
-    pie = px.pie(df.df, values="Air temperature [K]", names="Type", color="Type")
+    pie = px.pie(df.df, values="Air temperature [K]", names="Type", color="Type", title='Pie plot with Type')
 
     tab = [dbc.Row([
         dbc.Col([
@@ -107,11 +107,14 @@ def tab_model_content(df):
     ApiRequest().save_model()
     model = joblib.load('../files/dash/model.csv')
 
-    model_bar = px.bar(x=model.feature_importances_, y=model.feature_names_in_, )
+    model_bar = px.bar(x=model.feature_importances_, y=model.feature_names_in_,
+                       labels={'x': 'Importance', 'y': 'Feature'}, title='Feature Importance')
 
     cf = confusion_matrix(df.df_prediction['Target'], df.df_prediction['Predict Target'], labels=[0, 1])
 
-    cm = px.imshow(cf, text_auto=True, title='Confusion Matrix')
+    cm = px.imshow(cf, text_auto=True, x=['0', '1'], y=['0', '1'], title='Confusion Matrix',
+                   labels={'x': 'True class', 'y': 'Predicted class'})
+
     tab = [
         dbc.Row([
             dbc.Col([
@@ -129,7 +132,6 @@ def tab_model_content(df):
         ),
         dbc.Row([
             dbc.Col([
-                html.Div(['Feature Importance']),
                 dcc.Graph(id='model-bar',
                           figure=model_bar),
             ], width=6)

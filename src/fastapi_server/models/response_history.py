@@ -8,7 +8,7 @@ import enum
 class RequestEnum(enum.Enum):
     preprocessing = 1
     fit = 2
-    train = 3
+    predict = 3
     download = 4
 
 

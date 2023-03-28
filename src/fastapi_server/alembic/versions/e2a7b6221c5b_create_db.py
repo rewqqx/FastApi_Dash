@@ -30,7 +30,7 @@ def upgrade() -> None:
     )
     op.create_table('responses_history',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('request', sa.Enum('preprocessing', 'fit', 'train', 'download', name='requestenum'), nullable=True),
+    sa.Column('request', sa.Enum('preprocessing', 'fit', 'predict', 'download', name='requestenum'), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('created_by', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),

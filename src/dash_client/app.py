@@ -6,7 +6,7 @@ from src.dash_client.html.layout import layout
 from src.dash_client.api_request.api_request import ApiRequest
 from src.dash_client.dataframe.dataframe import Data
 
-df = Data(ApiRequest().get_data(1), ApiRequest().get_data(3))
+df = Data(ApiRequest().get_data(1), ApiRequest().get_data(3), ApiRequest().get_data(5))
 
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -20,9 +20,11 @@ app.layout = layout(df)
 )
 def update_hist(color, x_column):
     if color == 'All':
-        histogram = px.histogram(df.df, x=x_column, color="Target")
+        histogram = px.histogram(df.df, x=x_column, color="Target", color_discrete_map={0: '#636EFA', 1: '#EF553B'}, title='Frequency histogram with Target')
     elif color and x_column:
-        histogram = px.histogram(df.df.loc[df.df['Target'] == int(color)], x=x_column, color="Target")
+        histogram = px.histogram(df.df.loc[df.df['Target'] == int(color)], x=x_column, color="Target",
+                                 color_discrete_map={0: '#636EFA', 1: '#EF553B'},
+                                 title='Frequency histogram with Target')
 
     return histogram
 
@@ -33,7 +35,7 @@ def update_hist(color, x_column):
     Input('y-column-scatter', 'value')
 )
 def update_scatter(x_column, y_column):
-    scatter = px.scatter(df.df, x=x_column, y=y_column)
+    scatter = px.scatter(df.df, x=x_column, y=y_column, title='Scatter Plot')
     return scatter
 
 
@@ -42,7 +44,7 @@ def update_scatter(x_column, y_column):
     Input('x-column-hist', 'value')
 )
 def update_hist_all(x_column):
-    histogram_all = px.histogram(df.df, x=x_column)
+    histogram_all = px.histogram(df.df, x=x_column, title='Frequency histogram')
 
     return histogram_all
 
@@ -54,5 +56,8 @@ def update_graphs(active_cell, page_current):
         id_row = page_current * 8 + active_cell['row']
     elif active_cell:
         id_row = active_cell['row']
-
-    return df.df_prediction['Predict Target'].iloc[[id_row]] if id_row else 'Select row'
+    if id_row:
+        result = "Prediction Target: " + str(int(df.df_all_prediction['Predict Target'].iloc[id_row]))
+    else:
+        result = "Select row"
+    return result
